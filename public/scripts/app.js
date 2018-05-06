@@ -129,6 +129,10 @@ var Form = function (_React$Component3) {
           error: error
         };
       });
+
+      if (!error) {
+        e.target.elements.option.value = '';
+      }
     }
   }, {
     key: "render",
@@ -175,7 +179,7 @@ var FirstApp = function (_React$Component4) {
     _this5.addOption = _this5.addOption.bind(_this5);
     _this5.removeSingleOptions = _this5.removeSingleOptions.bind(_this5);
     _this5.state = {
-      options: ['Option One', 'Option Two', 'Option Three']
+      options: []
     };
     return _this5;
   }
@@ -195,13 +199,11 @@ var FirstApp = function (_React$Component4) {
       // alert("test");
       var randomNum = Math.floor(Math.random() * this.state.options.length);
       var option = this.state.options[randomNum];
-      console.log(option);
       alert(option);
     }
   }, {
     key: "addOption",
     value: function addOption(option) {
-      console.log(option);
       if (!option) {
         return 'Add Vaild Value';
       } else if (this.state.options.indexOf(option) > -1) {
@@ -215,7 +217,6 @@ var FirstApp = function (_React$Component4) {
   }, {
     key: "removeSingleOptions",
     value: function removeSingleOptions(optionToRemove) {
-      console.log(optionToRemove);
       this.setState(function (e) {
         return {
           options: e.options.filter(function (option) {
@@ -223,6 +224,36 @@ var FirstApp = function (_React$Component4) {
           })
         };
       });
+    }
+  }, {
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      try {
+        var json = localStorage.getItem('options');
+        var options = JSON.parse(json);
+        if (options) {
+          this.setState(function () {
+            return {
+              options: options
+            };
+          });
+        }
+      } catch (e) {
+        // do nothing
+      }
+    }
+  }, {
+    key: "componentDidUpdate",
+    value: function componentDidUpdate(prevPros, prevState) {
+      if (prevState.options.length !== this.state.options.length) {
+        var json = JSON.stringify(this.state.options);
+        localStorage.setItem('options', json);
+      }
+    }
+  }, {
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      console.log('componentWillUnmount');
     }
   }, {
     key: "render",

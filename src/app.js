@@ -60,6 +60,10 @@ class Form extends React.Component {
     this.setState(() => ({
       error: error
     }))
+
+    if (!error) {
+      e.target.elements.option.value = ''
+    }
   }
   render () {
     return (
@@ -84,7 +88,7 @@ class FirstApp extends React.Component {
     this.addOption = this.addOption.bind(this);
     this.removeSingleOptions = this.removeSingleOptions.bind(this);
     this.state = {
-        options:  ['Option One', 'Option Two', 'Option Three']
+        options:  []
     }
   }
   removeAllOptions() {
@@ -98,11 +102,9 @@ class FirstApp extends React.Component {
     // alert("test");
     let randomNum = Math.floor(Math.random() * this.state.options.length);
     let option = this.state.options[randomNum];
-    console.log(option);
     alert(option);
   }
   addOption(option) {
-    console.log(option);
     if (!option) {
       return 'Add Vaild Value'
     } else if(this.state.options.indexOf(option) > -1) {
@@ -112,12 +114,35 @@ class FirstApp extends React.Component {
     this.setState((e) => ({options: e.options.concat([option])}));
   }
   removeSingleOptions(optionToRemove) {
-    console.log(optionToRemove);
     this.setState((e) => ({
       options: e.options.filter((option) => {
         return optionToRemove !== option
       })
     }));
+  }
+  componentDidMount() {
+    try {
+      let json = localStorage.getItem('options');
+      let options  = JSON.parse(json);
+      if (options) {
+        this.setState(() => {
+          return {
+            options: options
+          };
+        })
+      }
+    } catch (e) {
+      // do nothing
+    }
+  }
+  componentDidUpdate(prevPros, prevState) {
+    if (prevState.options.length !== this.state.options.length) {
+      let json = JSON.stringify(this.state.options);
+      localStorage.setItem('options', json); 
+    }
+  }
+  componentWillUnmount() {
+    console.log('componentWillUnmount')
   }
   render () {
     let title = "My First React App",
